@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        padding-left: 100px;
+
+        background-color: beige;
+    }
+
+    .username:hover {
+        color: blue;
+        cursor: pointer;
+    }
+
+    .posts{
+        display: flex;
+        flex-direction: column;
+    }
+
+</style>
+<body>
+    <div class="container">
+        <div class="users-container">
+            <h1 class="headline">User</h1>
+            <div class="user" id="user"></div>
+            <div class="posts" id="posts"></div>
+        </div>
+    </div>
+
+    <script>
+        init()
+
+        async function init(){
+            const user = await getUser();
+            console.log(user)
+            populateUser(user.user)
+            for(const post of user.posts){
+                makePost(post)
+            }
+        }
+
+        async function getUser(){
+            const user = await fetch(`http://localhost:3000/api/users/${getUserIdFromUrl()}`)
+            return await user.json();
+        }
+
+        function populateUser(user){
+            const userElement = document.getElementById('user')
+            const username = document.createElement('p')
+            username.innerText = 'name: ' + user.name
+            userElement.appendChild(username)
+        }
+
+        function getUserIdFromUrl(){
+            const url = window.location.href;
+            return url.split('/')[4]
+        }
+
+        function makePost(post){
+            const containerElement = document.createElement('div')
+            containerElement.classList.add('post-container')
+            const title = document.createElement('h2')
+            const body = document.createElement('p')
+
+            title.innerText = post.title
+            body.innerText = post.body
+
+            containerElement.appendChild(title)
+            containerElement.appendChild(body)
+
+            document.getElementById('posts').appendChild(containerElement)
+        }
+    </script>
+</body>
+</html>

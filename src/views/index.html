@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        height: 100vh;
+        width: 100vw;
+
+        background-color: beige;
+    }
+
+    .username:hover {
+        color: blue;
+        cursor: pointer;
+    }
+
+</style>
+<body>
+    <div class="container">
+        <div class="users-container">
+            <h1 class="headline">Users</h1>
+            <div class="users" id="users"></div>
+        </div>
+    </div>
+
+    <script>
+        init()
+
+        async function init(){
+            const users = await getUsers();
+            populateUsers(users);
+        }
+
+        async function getUsers(){
+            const users = await fetch('http://localhost:3000/api/users');
+            return await users.json();
+        }
+
+        function populateUsers(users){
+            const usersContainer = document.getElementById('users')
+
+            for(const user of users.users){
+                const element = document.createElement('p')
+                element.innerText = user.name
+                element.classList.add('username')
+                element.addEventListener('click', () => {
+                    handleUserClick(user.id)
+                })
+
+                usersContainer.appendChild(element)
+            }
+        }
+
+        function handleUserClick(id){
+            window.location.assign(`http://localhost:3000/users/${id}`)
+        }
+    </script>
+</body>
+</html>
